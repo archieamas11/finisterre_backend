@@ -4,16 +4,11 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     $origin = $_SERVER['HTTP_ORIGIN'];
     if (preg_match('/^http:\\/\\/localhost:\\d+$/', $origin)) {
         header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Headers: Content-Type");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
         header("Access-Control-Allow-Methods: POST, OPTIONS");
+        header("Access-Control-Allow-Credentials: true");
     }
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -21,12 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Set content type
+header("Content-Type: application/json");
+
 include __DIR__ . '/../config.php';
+
+// Include JWT library
+require_once __DIR__ . '/../vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo "Method Not Allowed";
+    echo json_encode(["success" => false, "message" => "Method Not Allowed"]);
     exit();
 }
 
@@ -34,30 +37,49 @@ $data = json_decode(file_get_contents('php://input'), true);
 $username = isset($data['username']) ? $data['username'] : '';
 $password = isset($data['password']) ? $data['password'] : '';
 
-// Debug: log received username and password
+// Validate input
 if ($username === '' || $password === '') {
-    echo json_encode(["success" => false, "message" => "Missing username or password", "debug_username" => $username, "debug_password" => $password]);
+    echo json_encode(["success" => false, "message" => "Missing username or password"]);
     exit();
 }
 
-$stmt = $conn->prepare("SELECT password, isAdmin FROM tbl_users WHERE username = ?");
+// Prepare statement to prevent SQL injection
+$stmt = $conn->prepare("SELECT user_id, password, isAdmin FROM tbl_users WHERE username = ?");
 if (!$stmt) {
-    echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
+    echo json_encode(["success" => false, "message" => "Database error: " . $conn->error]);
     exit();
 }
+
 $stmt->bind_param("s", $username);
 $stmt->execute();
-$stmt->store_result();
+$result = $stmt->get_result();
 
-if ($stmt->num_rows > 0) {
-    $stmt->bind_result($hashed_password, $isAdmin);
-    $stmt->fetch();
-    if (password_verify($password, $hashed_password)) {
-        if ($isAdmin) {
-            echo json_encode(["success" => true, "message" => "Admin login successful", "isAdmin" => true]);
-        } else {
-            echo json_encode(["success" => true, "message" => "User login successful", "isAdmin" => false]);
-        }
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    
+    if (password_verify($password, $user['password'])) {
+        // Generate JWT token using environment variables
+        $issued_at = time();
+        $expiration_time = $issued_at + (60 * 60 * 24); // 24 hours
+        
+        $payload = array(
+            "iss" => JWT_ISSUER,
+            "aud" => JWT_AUDIENCE,
+            "iat" => $issued_at,
+            "exp" => $expiration_time,
+            "user_id" => $user['user_id'],
+            "username" => $username,
+            "isAdmin" => (bool)$user['isAdmin']
+        );
+        
+        $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
+        
+        echo json_encode([
+            "success" => true,
+            "message" => $user['isAdmin'] ? "Admin login successful" : "User login successful",
+            "token" => $token,
+            "isAdmin" => (bool)$user['isAdmin']
+        ]);
     } else {
         echo json_encode(["success" => false, "message" => "Invalid password"]);
     }
