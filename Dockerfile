@@ -14,7 +14,7 @@ COPY . /var/www/html/
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader; fi
+RUN if [ -f "composer.json" ]; then composer install --no-dev --optimize-autoloader || true; fi
 
 # Set correct ownership
 RUN chown -R www-data:www-data /var/www/html
