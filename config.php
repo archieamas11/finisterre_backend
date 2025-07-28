@@ -1,26 +1,24 @@
 <?php
-// Always send CORS headers
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowed = false;
-
-// Allow localhost with any port (for development)
-if (preg_match('/^http:\/\/localhost:\d+$/', $origin)) {
-    $allowed = true;
-}
-
-// Allow production frontend
-if ($origin === 'https://finisterre.vercel.app') {
-    $allowed = true;
-}
-
-if ($allowed) {
+$allowed_origins = [
+    'http://localhost:5173',
+    'https://finisterre.ct.ws',
+    'https://finisterre.vercel.app',
+];
+if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+} else {
+    // For development: allow localhost with any port
+    if (preg_match('/^http:\/\/localhost:\d+$/', $origin)) {
+        header("Access-Control-Allow-Origin: $origin");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    }
 }
-
-// Handle preflight OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
