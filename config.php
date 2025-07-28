@@ -1,4 +1,14 @@
 <?php
+// Always send CORS headers
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    $origin = $_SERVER['HTTP_ORIGIN'];
+    if (preg_match('/^http:\/\/localhost:\d+$/', $origin)) {
+        header("Access-Control-Allow-Origin: $origin");
+        header("Access-Control-Allow-Headers: Content-Type");
+        header("Access-Control-Allow-Methods: POST, OPTIONS");
+    }
+}
+
 // Check if Composer's autoload file exists and include it
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';

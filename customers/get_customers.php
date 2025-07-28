@@ -19,28 +19,23 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$username = isset($data['username']) ? $data['username'] : '';
-// Debug: log received username
-if ($username === '') {
-    echo json_encode(["success" => false, "message" => "Missing username", "debug_username" => $username]);
-    exit();
-}
 
-$stmt = $conn->prepare("SELECT username FROM tbl_users WHERE username = ?");
+$stmt = $conn->prepare("SELECT * FROM tbl_customers");
 if (!$stmt) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
     exit();
 }
-$stmt->bind_param("s", $username);
 $stmt->execute();
-$stmt->store_result();
+$result = $stmt->get_result();
 
-if ($stmt->num_rows > 0) {
-    $stmt->bind_result($username);
-    $stmt->fetch();
-    echo json_encode(["success" => true, "message" => "User found", "username" => $username]);
+if ($result && $result->num_rows > 0) {
+    $customers = [];
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = $row;
+    }
+    echo json_encode(["success" => true, "message" => "Customers found", "customers" => $customers]);
 } else {
-    echo json_encode(["success" => false, "message" => "User not found"]);
+    echo json_encode(["success" => false, "message" => "Customer not found"]);
 }
 $conn->close();
 ?>
