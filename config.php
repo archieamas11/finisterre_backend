@@ -1,12 +1,29 @@
 <?php
 // Always send CORS headers
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    $origin = $_SERVER['HTTP_ORIGIN'];
-    if (preg_match('/^http:\/\/localhost:\d+$/', $origin)) {
-        header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Headers: Content-Type");
-        header("Access-Control-Allow-Methods: POST, OPTIONS");
-    }
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowed = false;
+
+// Allow localhost with any port (for development)
+if (preg_match('/^http:\/\/localhost:\d+$/', $origin)) {
+    $allowed = true;
+}
+
+// Allow production frontend
+if ($origin === 'https://finisterre.vercel.app') {
+    $allowed = true;
+}
+
+if ($allowed) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+}
+
+// Handle preflight OPTIONS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 
 // Check if Composer's autoload file exists and include it
