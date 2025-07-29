@@ -63,14 +63,10 @@ $insert->bind_param(
 );
 $insert->execute();
 
-if ($insert->execute()) {
-    echo json_encode([
-        'success' => true,
-        'id' => $insert->insert_id
-    ]);
+if ($insert->affected_rows > 0) {
+    echo json_encode(["success" => true, "message" => "Customer created successfully"]);
 } else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Insert failed']);
+    echo json_encode(["success" => false, "message" => "Failed to create customer"]);
 }
 
 $insert->close();

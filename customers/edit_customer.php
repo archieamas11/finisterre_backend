@@ -1,0 +1,60 @@
+<?php
+include __DIR__ . '/../config.php';
+
+// Get and decode input
+$data = json_decode(file_get_contents('php://input'), true);
+// Basic input validation
+$required_fields = ['customer_id', 'last_name', 'first_name', 'middle_name', 'nickname', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
+foreach ($required_fields as $field) {
+    if (empty($data[$field])) {
+        echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
+        exit();
+    }
+}
+
+// Check for JSON decode errors
+if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode(["success" => false, "message" => "Invalid JSON input"]);
+    exit();
+}
+
+// Update customer using prepared statement
+$update = $conn->prepare("UPDATE `tbl_customers` SET `last_name`=?, `first_name`=?, `middle_name`=?, `nickname`=?, `address`=?, `contact_number`=?, `email`=?, `birth_date`=?, `gender`=?, `religion`=?, `citizenship`=?, `status`=?, `occupation`=?, `updated_at`=NOW() WHERE `customer_id`=?");
+
+if (!$update) {
+    echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
+    $conn->close();
+    exit();
+}
+
+$update->bind_param(
+    "sssssssssssssi",
+    $data['last_name'],
+    $data['first_name'],
+    $data['middle_name'],
+    $data['nickname'],
+    $data['address'],
+    $data['contact_number'],
+    $data['email'],
+    $data['birth_date'],
+    $data['gender'],
+    $data['religion'],
+    $data['citizenship'],
+    $data['status'],
+    $data['occupation'],
+    $data['customer_id']
+);
+
+if ($update->execute()) {
+    echo json_encode([
+        'success' => true,
+        'id' => $data['customer_id']
+    ]);
+} else {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Update failed']);
+}
+
+$update->close();
+$conn->close();
+?>
