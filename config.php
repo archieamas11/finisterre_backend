@@ -1,6 +1,6 @@
 <?php
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowed_origins = 'https://finisterre.vercel.app/';
+$allowed_origins = 'https://finisterre.vercel.app';
 if ($origin === $allowed_origins) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");

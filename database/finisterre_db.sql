@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 28, 2025 at 06:24 AM
+-- Generation Time: Jul 29, 2025 at 01:48 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -52,8 +52,33 @@ CREATE TABLE `tbl_customers` (
 --
 
 INSERT INTO `tbl_customers` (`customer_id`, `user_id`, `first_name`, `middle_name`, `last_name`, `email`, `nickname`, `address`, `contact_number`, `birth_date`, `gender`, `religion`, `citizenship`, `status`, `occupation`, `created_at`, `updated_at`) VALUES
-(35, 3, 'archie', 'amas', 'albarico', 'archiealbarico69@gmail.com', 'chie', 'tunghaan, minglanilla, cebu', '09231226478', '2025-07-02', 'female', 'catholic', 'filipino', 'single', 'none', '2025-07-27 18:59:49', '2025-07-27 18:59:49'),
-(37, 2, 'jason', 'amas', 'albarico', 'archiealbarico69@gmail.com', 'chie', 'tunghaan, minglanilla, cebu', '09231226478', '2025-07-02', 'female', 'catholic', 'filipino', 'single', 'none', '2025-07-27 18:59:49', '2025-07-27 18:59:49');
+(35, 3, 'archie', 'gwapo', 'albarico', 'archiealbarico69@gmail.com', 'chie', 'tunghaan, minglanilla, cebu', '09634636306', '2025-07-02', 'female', 'catholic', 'filipino', 'single', 'none', '2025-07-27 18:59:49', '2025-07-29 14:02:18'),
+(39, NULL, 'lucy', 'caneteq', 'ababa', 'funihanu@mailinator.com', 'chiekay', 'Soluta voluptatem Q', '09231226478', '2006-06-02', 'female', 'Quasi dicta facere q', 'Magnam officia qui l', 'widowed', 'Quis labore error se', '2025-07-29 00:52:30', '2025-07-29 13:31:10'),
+(96, NULL, 'qwe', 'qwe', 'qwe', 'voni@mailinator.com', 'qwe', 'qwe', '09231226478', '2025-07-04', 'male', 'qwe', 'asdasd', 'single', 'qwe', '2025-07-29 14:02:33', '2025-07-29 14:02:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_deceased`
+--
+
+CREATE TABLE `tbl_deceased` (
+  `deceased_id` int NOT NULL,
+  `lot_id` int NOT NULL,
+  `dead_fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dead_gender` enum('male','female') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dead_citizenship` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dead_civil_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dead_relationship` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dead_message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dead_bio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dead_profile_link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dead_interment` date NOT NULL,
+  `dead_birth_date` date NOT NULL,
+  `dead_date_death` date NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -64,15 +89,48 @@ INSERT INTO `tbl_customers` (`customer_id`, `user_id`, `first_name`, `middle_nam
 CREATE TABLE `tbl_lot` (
   `lot_id` int NOT NULL,
   `customer_id` int NOT NULL,
-  `grave_id` int NOT NULL,
-  `type` enum('deluxe','standard') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `plot_id` int NOT NULL,
+  `type` enum('bronze','silver','platinum','diamon') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `payment_type` enum('installment','full') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `payment_frequency` enum('monthly','annually','none') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `start_date` date NOT NULL,
   `last_payment_date` date DEFAULT NULL,
   `next_due_date` date DEFAULT NULL,
-  `lot_status` enum('active','completed','cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `lot_status` enum('active','completed','cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_plots`
+--
+
+CREATE TABLE `tbl_plots` (
+  `plot_id` int NOT NULL,
+  `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `category` enum('bronze','silver','platinum','diamond') NOT NULL,
+  `status` enum('available','reserved','occupied') NOT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `coordinates` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `tbl_plots`
+--
+
+INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `status`, `label`, `coordinates`) VALUES
+(1, 'A', 'diamond', 'occupied', NULL, '123.79769285129, 10.249193799482'),
+(2, 'A', 'diamond', 'available', NULL, '123.79772218795, 10.249206732589'),
+(3, 'A', 'silver', 'available', NULL, '123.79775692256, 10.249221975178'),
+(4, 'A', 'silver', 'available', NULL, '123.7977887235, 10.249236063025'),
+(5, 'A', 'diamond', 'available', NULL, '123.79773427465, 10.24917878784'),
+(6, 'A', 'diamond', 'available', NULL, '123.79770376452, 10.249166316629'),
+(7, 'A', 'bronze', 'available', NULL, '123.79782322341, 10.249251074665'),
+(8, 'A', 'platinum', 'available', NULL, '123.79776900926, 10.249193799482'),
+(9, 'A', 'platinum', 'available', NULL, '123.79780116224, 10.249206963537'),
+(10, 'A', 'bronze', 'reserved', NULL, '123.79783613154, 10.249222206126');
 
 -- --------------------------------------------------------
 
@@ -112,12 +170,25 @@ ALTER TABLE `tbl_customers`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `tbl_deceased`
+--
+ALTER TABLE `tbl_deceased`
+  ADD PRIMARY KEY (`deceased_id`),
+  ADD KEY `grave_id` (`lot_id`);
+
+--
 -- Indexes for table `tbl_lot`
 --
 ALTER TABLE `tbl_lot`
   ADD PRIMARY KEY (`lot_id`),
-  ADD KEY `grave_id` (`grave_id`),
+  ADD KEY `grave_id` (`plot_id`),
   ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `tbl_plots`
+--
+ALTER TABLE `tbl_plots`
+  ADD PRIMARY KEY (`plot_id`);
 
 --
 -- Indexes for table `tbl_users`
@@ -133,13 +204,25 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_customers`
 --
 ALTER TABLE `tbl_customers`
-  MODIFY `customer_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `customer_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+
+--
+-- AUTO_INCREMENT for table `tbl_deceased`
+--
+ALTER TABLE `tbl_deceased`
+  MODIFY `deceased_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `tbl_lot`
 --
 ALTER TABLE `tbl_lot`
-  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT for table `tbl_plots`
+--
+ALTER TABLE `tbl_plots`
+  MODIFY `plot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
@@ -158,10 +241,17 @@ ALTER TABLE `tbl_customers`
   ADD CONSTRAINT `tbl_customers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
+-- Constraints for table `tbl_deceased`
+--
+ALTER TABLE `tbl_deceased`
+  ADD CONSTRAINT `tbl_deceased_ibfk_1` FOREIGN KEY (`lot_id`) REFERENCES `tbl_lot` (`lot_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
 -- Constraints for table `tbl_lot`
 --
 ALTER TABLE `tbl_lot`
-  ADD CONSTRAINT `tbl_lot_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customers` (`customer_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `tbl_lot_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customers` (`customer_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `tbl_lot_ibfk_2` FOREIGN KEY (`plot_id`) REFERENCES `tbl_plots` (`plot_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
