@@ -4,7 +4,7 @@ include __DIR__ . '/../config.php';
 // Get and decode input
 $data = json_decode(file_get_contents('php://input'), true);
 // Basic input validation
-$required_fields = ['customer_id', 'last_name', 'first_name', 'middle_name', 'nickname', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
+$required_fields = ['customer_id', 'last_name', 'first_name', 'middle_name', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
@@ -19,7 +19,7 @@ if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
 }
 
 // Update customer using prepared statement
-$update = $conn->prepare("UPDATE `tbl_customers` SET `last_name`=?, `first_name`=?, `middle_name`=?, `nickname`=?, `address`=?, `contact_number`=?, `email`=?, `birth_date`=?, `gender`=?, `religion`=?, `citizenship`=?, `status`=?, `occupation`=?, `updated_at`=NOW() WHERE `customer_id`=?");
+$update = $conn->prepare("UPDATE `tbl_customers` SET `last_name`=?, `first_name`=?, `middle_name`=?, `address`=?, `contact_number`=?, `email`=?, `birth_date`=?, `gender`=?, `religion`=?, `citizenship`=?, `status`=?, `occupation`=?, `updated_at`=NOW() WHERE `customer_id`=?");
 
 if (!$update) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
@@ -28,11 +28,10 @@ if (!$update) {
 }
 
 $update->bind_param(
-    "sssssssssssssi",
+    "ssssssssssssi",
     $data['last_name'],
     $data['first_name'],
     $data['middle_name'],
-    $data['nickname'],
     $data['address'],
     $data['contact_number'],
     $data['email'],

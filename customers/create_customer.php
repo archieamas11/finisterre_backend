@@ -4,7 +4,7 @@ include __DIR__ . '/../config.php';
 // Get and decode input
 $data = json_decode(file_get_contents('php://input'), true);
 // Basic input validation
-$required_fields = ['last_name', 'first_name', 'middle_name', 'nickname', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
+$required_fields = ['last_name', 'first_name', 'middle_name', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
@@ -37,7 +37,7 @@ if ($stmt->num_rows > 0) {
 $stmt->close();
 
 // Insert new customer
-$insert = $conn->prepare("INSERT INTO `tbl_customers`(`last_name`, `first_name`, `middle_name`, `nickname`, `address`, `contact_number`, `email`, `birth_date`, `gender`, `religion`, `citizenship`, `status`, `occupation`, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+$insert = $conn->prepare("INSERT INTO `tbl_customers`(`last_name`, `first_name`, `middle_name`, `address`, `contact_number`, `email`, `birth_date`, `gender`, `religion`, `citizenship`, `status`, `occupation`, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
 if (!$insert) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
@@ -46,11 +46,10 @@ if (!$insert) {
 }
 
 $insert->bind_param(
-    "sssssssssssss",
+    "ssssssssssss",
     $data['last_name'],
     $data['first_name'],
     $data['middle_name'],
-    $data['nickname'],
     $data['address'],
     $data['contact_number'],
     $data['email'],
