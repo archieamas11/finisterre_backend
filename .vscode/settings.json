@@ -1,10 +1,33 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true
-    },
-    "hide-files.files": []
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "vendor": true,
+    ".env": true,
+    ".env.example": true,
+    ".gitignore": true,
+    "composer.json": true,
+    "composer.lock": true,
+    "config.php": true,
+    "Dockerfile": true,
+    "index.php": true,
+    "webmap": true,
+    "database": true
+  },
+  "hide-files.files": [
+    "vendor",
+    ".env",
+    ".env.example",
+    ".gitignore",
+    "composer.json",
+    "composer.lock",
+    "config.php",
+    "Dockerfile",
+    "index.php",
+    "webmap",
+    "database"
+  ]
 }
