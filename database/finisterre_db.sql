@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 29, 2025 at 01:48 PM
+-- Generation Time: Aug 02, 2025 at 02:50 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -52,9 +52,8 @@ CREATE TABLE `tbl_customers` (
 --
 
 INSERT INTO `tbl_customers` (`customer_id`, `user_id`, `first_name`, `middle_name`, `last_name`, `email`, `nickname`, `address`, `contact_number`, `birth_date`, `gender`, `religion`, `citizenship`, `status`, `occupation`, `created_at`, `updated_at`) VALUES
-(35, 3, 'archie', 'gwapo', 'albarico', 'archiealbarico69@gmail.com', 'chie', 'tunghaan, minglanilla, cebu', '09634636306', '2025-07-02', 'female', 'catholic', 'filipino', 'single', 'none', '2025-07-27 18:59:49', '2025-07-29 14:02:18'),
-(39, NULL, 'lucy', 'caneteq', 'ababa', 'funihanu@mailinator.com', 'chiekay', 'Soluta voluptatem Q', '09231226478', '2006-06-02', 'female', 'Quasi dicta facere q', 'Magnam officia qui l', 'widowed', 'Quis labore error se', '2025-07-29 00:52:30', '2025-07-29 13:31:10'),
-(96, NULL, 'qwe', 'qwe', 'qwe', 'voni@mailinator.com', 'qwe', 'qwe', '09231226478', '2025-07-04', 'male', 'qwe', 'asdasd', 'single', 'qwe', '2025-07-29 14:02:33', '2025-07-29 14:02:33');
+(99, NULL, 'archie', 'amas', 'albarico', 'archiealbarico69@gmail.com', 'chie', 'tunghaan, minglanilla, cebu', '09231226478', '2000-10-24', 'male', 'catholic', 'filipino', 'divorced', 'freelancing', '2025-08-01 14:37:57', '2025-08-01 21:01:55'),
+(109, NULL, 'asd', 'asd', 'albarico', 'archiealbarico69@gmail.com', NULL, 'tunghaan, minglanilla, cebu', '09231226478', '2000-10-24', 'female', 'catholic', 'filipino', 'married', 'freelancing', '2025-08-01 20:43:07', '2025-08-01 20:43:07');
 
 -- --------------------------------------------------------
 
@@ -92,7 +91,7 @@ CREATE TABLE `tbl_lot` (
   `plot_id` int NOT NULL,
   `type` enum('bronze','silver','platinum','diamon') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `payment_type` enum('installment','full') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `payment_frequency` enum('monthly','annually','none') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payment_frequency` enum('monthly','annually','none','quarterly') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'none',
   `start_date` date NOT NULL,
   `last_payment_date` date DEFAULT NULL,
   `next_due_date` date DEFAULT NULL,
@@ -100,6 +99,35 @@ CREATE TABLE `tbl_lot` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_lot`
+--
+
+INSERT INTO `tbl_lot` (`lot_id`, `customer_id`, `plot_id`, `type`, `payment_type`, `payment_frequency`, `start_date`, `last_payment_date`, `next_due_date`, `lot_status`, `created_at`, `updated_at`) VALUES
+(35, 99, 1, 'bronze', 'installment', 'monthly', '2025-08-03', NULL, '2025-08-29', 'active', '2025-08-01 06:44:08', '2025-08-01 06:44:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_media`
+--
+
+CREATE TABLE `tbl_media` (
+  `media_id` int NOT NULL,
+  `plot_id` int NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `tbl_media`
+--
+
+INSERT INTO `tbl_media` (`media_id`, `plot_id`, `file_name`, `created_at`, `updated_at`) VALUES
+(1, 1, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1752756875/Grave_Maintenance_-_Standard_copy_mzxqpt.jpg', '2025-08-02 04:17:40', '2025-08-02 04:17:40'),
+(2, 1, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1752756582/9457a7ca-fa2f-4331-b32e-d0223db1fd8a_-_Edited_xkre2p.png', '2025-08-02 04:17:40', '2025-08-02 04:17:40');
 
 -- --------------------------------------------------------
 
@@ -111,6 +139,9 @@ CREATE TABLE `tbl_plots` (
   `plot_id` int NOT NULL,
   `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `category` enum('bronze','silver','platinum','diamond') NOT NULL,
+  `length` varchar(255) DEFAULT NULL,
+  `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `status` enum('available','reserved','occupied') NOT NULL,
   `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `coordinates` varchar(255) NOT NULL
@@ -120,17 +151,43 @@ CREATE TABLE `tbl_plots` (
 -- Dumping data for table `tbl_plots`
 --
 
-INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `status`, `label`, `coordinates`) VALUES
-(1, 'A', 'diamond', 'occupied', NULL, '123.79769285129, 10.249193799482'),
-(2, 'A', 'diamond', 'available', NULL, '123.79772218795, 10.249206732589'),
-(3, 'A', 'silver', 'available', NULL, '123.79775692256, 10.249221975178'),
-(4, 'A', 'silver', 'available', NULL, '123.7977887235, 10.249236063025'),
-(5, 'A', 'diamond', 'available', NULL, '123.79773427465, 10.24917878784'),
-(6, 'A', 'diamond', 'available', NULL, '123.79770376452, 10.249166316629'),
-(7, 'A', 'bronze', 'available', NULL, '123.79782322341, 10.249251074665'),
-(8, 'A', 'platinum', 'available', NULL, '123.79776900926, 10.249193799482'),
-(9, 'A', 'platinum', 'available', NULL, '123.79780116224, 10.249206963537'),
-(10, 'A', 'bronze', 'reserved', NULL, '123.79783613154, 10.249222206126');
+INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `length`, `width`, `area`, `status`, `label`, `coordinates`) VALUES
+(1, 'A', 'diamond', '2.5', '1.2', '3.0', 'occupied', NULL, '123.79769285129, 10.249193799482'),
+(2, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79772218795, 10.249206732589'),
+(3, 'A', 'silver', NULL, NULL, NULL, 'available', NULL, '123.79775692256, 10.249221975178'),
+(4, 'A', 'silver', NULL, NULL, NULL, 'available', NULL, '123.7977887235, 10.249236063025'),
+(5, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79773427465, 10.24917878784'),
+(6, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79770376452, 10.249166316629'),
+(7, 'A', 'bronze', NULL, NULL, NULL, 'available', NULL, '123.79782322341, 10.249251074665'),
+(8, 'A', 'platinum', NULL, NULL, NULL, 'available', NULL, '123.79776900926, 10.249193799482'),
+(9, 'A', 'platinum', NULL, NULL, NULL, 'available', NULL, '123.79780116224, 10.249206963537'),
+(10, 'A', 'bronze', NULL, NULL, NULL, 'reserved', NULL, '123.79783613154, 10.249222206126');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_plots_col`
+--
+
+CREATE TABLE `tbl_plots_col` (
+  `col_id` int NOT NULL,
+  `rows` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `columns` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `coordinates` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `tbl_plots_col`
+--
+
+INSERT INTO `tbl_plots_col` (`col_id`, `rows`, `columns`, `coordinates`, `created_at`, `updated_at`) VALUES
+(1, '5', '9', '123.79734521528, 10.24940426143', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
+(2, '5', '9', '123.79737958462, 10.249367524939', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
+(3, '5', '9', '123.79741810198, 10.249323791016', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
+(4, '5', '9', '123.79745958222, 10.249275975252', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
+(5, '5', '9', '123.79750046989, 10.249232824435', '2025-08-02 21:12:12', '2025-08-02 21:12:12');
 
 -- --------------------------------------------------------
 
@@ -185,10 +242,23 @@ ALTER TABLE `tbl_lot`
   ADD KEY `customer_id` (`customer_id`);
 
 --
+-- Indexes for table `tbl_media`
+--
+ALTER TABLE `tbl_media`
+  ADD PRIMARY KEY (`media_id`),
+  ADD KEY `plot_id` (`plot_id`);
+
+--
 -- Indexes for table `tbl_plots`
 --
 ALTER TABLE `tbl_plots`
   ADD PRIMARY KEY (`plot_id`);
+
+--
+-- Indexes for table `tbl_plots_col`
+--
+ALTER TABLE `tbl_plots_col`
+  ADD PRIMARY KEY (`col_id`);
 
 --
 -- Indexes for table `tbl_users`
@@ -204,7 +274,7 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_customers`
 --
 ALTER TABLE `tbl_customers`
-  MODIFY `customer_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `customer_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `tbl_deceased`
@@ -216,13 +286,25 @@ ALTER TABLE `tbl_deceased`
 -- AUTO_INCREMENT for table `tbl_lot`
 --
 ALTER TABLE `tbl_lot`
-  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT for table `tbl_media`
+--
+ALTER TABLE `tbl_media`
+  MODIFY `media_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_plots`
 --
 ALTER TABLE `tbl_plots`
   MODIFY `plot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `tbl_plots_col`
+--
+ALTER TABLE `tbl_plots_col`
+  MODIFY `col_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
@@ -252,6 +334,12 @@ ALTER TABLE `tbl_deceased`
 ALTER TABLE `tbl_lot`
   ADD CONSTRAINT `tbl_lot_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customers` (`customer_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `tbl_lot_ibfk_2` FOREIGN KEY (`plot_id`) REFERENCES `tbl_plots` (`plot_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `tbl_media`
+--
+ALTER TABLE `tbl_media`
+  ADD CONSTRAINT `tbl_media_ibfk_1` FOREIGN KEY (`plot_id`) REFERENCES `tbl_plots` (`plot_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

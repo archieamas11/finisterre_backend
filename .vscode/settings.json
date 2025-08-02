@@ -13,8 +13,7 @@
     "composer.lock": true,
     "Dockerfile": true,
     "index.php": true,
-    "webmap": true,
-    "database": true
+    "webmap": true
   },
   "hide-files.files": [
     "vendor",
@@ -25,7 +24,6 @@
     "composer.lock",
     "Dockerfile",
     "index.php",
-    "webmap",
-    "database"
+    "webmap"
   ]
 }
