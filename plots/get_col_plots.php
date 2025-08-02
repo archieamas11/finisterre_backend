@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . '/../config.php';
 
-$stmt = $conn->prepare("SELECT * FROM tbl_plots_cols");
+$stmt = $conn->prepare("SELECT * FROM tbl_plots_col");
 
 if (!$stmt) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
