@@ -2,7 +2,7 @@
 include __DIR__ . '/../config.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
-$stmt = $conn->prepare("SELECT * FROM tbl_plots");
+$stmt = $conn->prepare("SELECT p.*, m.file_name FROM tbl_plots p LEFT JOIN tbl_media m ON p.plot_id = m.plot_id");
 
 if (!$stmt) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
