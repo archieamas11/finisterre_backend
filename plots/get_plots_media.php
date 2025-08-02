@@ -28,11 +28,16 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
-    $plots = [];
+    $fileNames = [];
     while ($row = $result->fetch_assoc()) {
-        $plots[] = $row;
+        $fileNames[] = $row['file_name'];
     }
-    echo json_encode(["success" => true, "message" => "available plots found", "plots" => $plots]);
+    echo json_encode([
+        "success" => true,
+        "message" => "available plots found",
+        "plot_id" => $plotId,
+        "file_names" => $fileNames
+    ]);
 } else {
     echo json_encode(["success" => false, "message" => "no available plots found"]);
 }

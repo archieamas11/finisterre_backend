@@ -12,14 +12,14 @@
 
     <?php
 		// Database connection
-		$connect = mysqli_connect("localhost", "root", "", "cemeterease");
+		$connect = mysqli_connect("localhost", "root", "", "finisterre_db");
 		
 		if (!$connect) {
 			die('Connection failed: ' . mysqli_connect_error());
 		}
 
 		// Read and decode JSON file
-		$file_name = "map.json";
+		$file_name = "map_col.json";
 		$data = file_get_contents($file_name); 
 		$features = json_decode($data, true);
 
@@ -32,16 +32,16 @@
 
 		// Process each feature in the JSON array
 		foreach ($features as $feature) {
-			// Extract block from properties
-			$category = $feature['properties']['category'];
-
 			// Extract coordinates array and convert to comma-separated string with space
 			$coords_array = $feature['geometry']['coordinates'];
 			$coordinates = $coords_array[0] . ', ' . $coords_array[1]; // longitude, latitude (with space)
 			
 			// Use prepared statement to prevent SQL injection
-			$stmt = mysqli_prepare($connect, "INSERT INTO grave_points(category, coordinates) VALUES (?, ?)");
-			mysqli_stmt_bind_param($stmt, "ss", $category, $coordinates);
+			$stmt = mysqli_prepare(
+				$connect,
+				"INSERT INTO tbl_plots_col(coordinates, created_at, updated_at) VALUES (?, NOW(), NOW())"
+			);
+			mysqli_stmt_bind_param($stmt, "s", $coordinates);
 
 			if (mysqli_stmt_execute($stmt)) {
 				$success_count++;
