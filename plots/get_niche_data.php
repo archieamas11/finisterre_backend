@@ -2,28 +2,28 @@
 include __DIR__ . '/../config.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
-$stmt = $conn->prepare("SELECT
-  l.*,
-  p.block,
-  p.plot_id         AS lot_plot_id,
-  p.category,
-  CONCAT(
-    c.first_name, ' ',
-    c.middle_name, ' ',
-    c.last_name
-  )                  AS customer_name,
-  n.*
-FROM tbl_lot AS l
+$stmt = $conn->prepare("SELECT p.*, n.*, c.*, d.*,
+    CONCAT(
+        c.first_name,
+        ' ',
+        c.middle_name,
+        ' ',
+        c.last_name
+    ) AS customer_name
+FROM
+    tbl_lot AS l
 JOIN tbl_customers AS c
-  ON c.customer_id = l.customer_id
+ON
+    c.customer_id = l.customer_id
 LEFT JOIN tbl_plots AS p
-  ON p.plot_id = l.plot_id
+ON
+    p.plot_id = l.plot_id
+LEFT JOIN tbl_deceased AS d
+ON
+    d.lot_id = l.lot_id
 LEFT JOIN tbl_niche AS n
-  ON p.plot_id = n.plot_id
-WHERE l.lot_status != 'canceled'
-ORDER BY
-  CASE WHEN l.lot_status = 'active' THEN 1 ELSE 2 END,
-  l.lot_status;
+ON
+    p.plot_id = n.plot_id;
 ");
 
 if (!$stmt) {
