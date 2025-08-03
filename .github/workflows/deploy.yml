@@ -25,9 +25,4 @@ jobs:
           local-dir: ./
           method: ftp
           dangerous-clean-slate: true
-          exclude:
-            - uploads/**
-            - backups/**
-            - vendor/**
-            - .env
-            - config.php
+          exclude: uploads/**,backups/**,vendor/**,.env,config.php
