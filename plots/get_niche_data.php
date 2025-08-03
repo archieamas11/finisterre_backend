@@ -9,9 +9,8 @@ if (!$plot_id) {
 }
 
 $stmt = $conn->prepare("SELECT
-    n.niche_id,
-    n.niche_number,
-    n.status,
+    l.niche_number,
+    l.niche_status,
     p.`rows`,
     p.`columns`,
     c.customer_id,
@@ -24,12 +23,11 @@ $stmt = $conn->prepare("SELECT
     d.dead_date_death,
     d.dead_interment
 FROM
-    tbl_niche n
-LEFT JOIN tbl_lot l ON l.niche_id = n.niche_id
+    tbl_lot l
 LEFT JOIN tbl_customers c ON c.customer_id = l.customer_id
 LEFT JOIN tbl_deceased d ON d.lot_id = l.lot_id
-LEFT JOIN tbl_plots p ON p.plot_id = n.plot_id
-WHERE n.plot_id = ?
+LEFT JOIN tbl_plots p ON p.plot_id = l.plot_id
+WHERE l.plot_id = ?
 ORDER BY p.rows, p.columns
 ");
 
