@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
   ftp-deploy:
     name: FTP Deploy
@@ -13,13 +15,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 3️⃣ Deploy via FTP
+      - name: Build project
+        run: |
+          echo "No build step set. Add your build command here if needed."
+
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/finisterre/
-          local-dir: ./ 
+          server-dir: /public_html/
+          local-dir: ./
           method: ftp
+          dangerous-clean-slate: true
+          exclude:
+            - uploads/**
+            - backups/**
+            - vendor/**
+            - .env
+            - config.php
