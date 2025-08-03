@@ -1,21 +1,18 @@
-name: Deploy to x10Hosting
+name: Deploy to x10Hosting (Dry Run)
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
-  ftp-deploy:
-    name: FTP Deploy
+  ftp-deploy-dry-run:
+    name: FTP Deploy Dry Run
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: FTP Deploy
+      - name: FTP Deploy Dry Run
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -24,5 +21,9 @@ jobs:
           server-dir: /public_html/
           local-dir: ./
           method: ftp
+          dry-run: true
           dangerous-clean-slate: true
-          exclude: uploads/**,backups/**,vendor/**,.env,config.php
+          exclude: |
+            vendor/**
+            .env
+            config.php
