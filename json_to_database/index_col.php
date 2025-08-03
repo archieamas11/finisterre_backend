@@ -34,14 +34,16 @@
 		foreach ($features as $feature) {
 			// Extract coordinates array and convert to comma-separated string with space
 			$coords_array = $feature['geometry']['coordinates'];
-			$coordinates = $coords_array[0] . ', ' . $coords_array[1]; // longitude, latitude (with space)
-			
+			$rows = isset($feature['geometry']['rows']) ? $feature['geometry']['rows'] : '0';
+			$columns = isset($feature['geometry']['columns']) ? $feature['geometry']['columns'] : '0';
+			$coordinates = $coords_array[0] . ', ' . $coords_array[1];
+			$category = "chambers";
 			// Use prepared statement to prevent SQL injection
 			$stmt = mysqli_prepare(
 				$connect,
-				"INSERT INTO tbl_plots_col(coordinates, created_at, updated_at) VALUES (?, NOW(), NOW())"
+				"INSERT INTO tbl_plots(category, coordinates, `rows`, `columns`) VALUES (?, ?, ?, ?)"
 			);
-			mysqli_stmt_bind_param($stmt, "s", $coordinates);
+			mysqli_stmt_bind_param($stmt, "ssii", $category, $coordinates, $rows, $columns);
 
 			if (mysqli_stmt_execute($stmt)) {
 				$success_count++;
