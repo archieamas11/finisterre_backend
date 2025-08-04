@@ -42,5 +42,3 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/.env
-            **/config.php
