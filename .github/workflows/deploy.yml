@@ -8,24 +8,23 @@ on:
 
 jobs:
   ftp-deploy:
-    name: FTP Deploy
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
           server-dir: /public_html/
           local-dir: ./
-          method: ftp
           dangerous-clean-slate: true
           exclude: |
-            vendor/**
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/vendor/**
             .env
             /config.php
