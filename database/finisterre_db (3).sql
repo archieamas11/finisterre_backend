@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 02, 2025 at 02:50 PM
+-- Generation Time: Aug 03, 2025 at 05:38 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -79,6 +79,13 @@ CREATE TABLE `tbl_deceased` (
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tbl_deceased`
+--
+
+INSERT INTO `tbl_deceased` (`deceased_id`, `lot_id`, `dead_fullname`, `dead_gender`, `dead_citizenship`, `dead_civil_status`, `dead_relationship`, `dead_message`, `dead_bio`, `dead_profile_link`, `dead_interment`, `dead_birth_date`, `dead_date_death`, `created_at`, `updated_at`) VALUES
+(37, 37, 'lebron james', 'male', 'sdf', 'sdf', 'sdf', 'sdf', 'sdf', 'sdf', '2025-08-12', '2025-08-27', '2025-08-06', '2025-08-03 08:50:54', '2025-08-03 08:50:54');
+
 -- --------------------------------------------------------
 
 --
@@ -89,12 +96,8 @@ CREATE TABLE `tbl_lot` (
   `lot_id` int NOT NULL,
   `customer_id` int NOT NULL,
   `plot_id` int NOT NULL,
-  `type` enum('bronze','silver','platinum','diamon') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `payment_type` enum('installment','full') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `payment_frequency` enum('monthly','annually','none','quarterly') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'none',
-  `start_date` date NOT NULL,
-  `last_payment_date` date DEFAULT NULL,
-  `next_due_date` date DEFAULT NULL,
+  `niche_number` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `niche_status` enum('available','reserved','occupied') COLLATE utf8mb4_general_ci DEFAULT NULL,
   `lot_status` enum('active','completed','cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
@@ -104,8 +107,10 @@ CREATE TABLE `tbl_lot` (
 -- Dumping data for table `tbl_lot`
 --
 
-INSERT INTO `tbl_lot` (`lot_id`, `customer_id`, `plot_id`, `type`, `payment_type`, `payment_frequency`, `start_date`, `last_payment_date`, `next_due_date`, `lot_status`, `created_at`, `updated_at`) VALUES
-(35, 99, 1, 'bronze', 'installment', 'monthly', '2025-08-03', NULL, '2025-08-29', 'active', '2025-08-01 06:44:08', '2025-08-01 06:44:08');
+INSERT INTO `tbl_lot` (`lot_id`, `customer_id`, `plot_id`, `niche_number`, `niche_status`, `lot_status`, `created_at`, `updated_at`) VALUES
+(37, 99, 15, '23', 'occupied', 'active', '2025-08-03 07:16:33', '2025-08-03 07:16:33'),
+(38, 109, 1, NULL, NULL, 'active', '2025-08-03 07:16:33', '2025-08-03 07:16:33'),
+(39, 99, 15, '22', 'reserved', 'active', '2025-08-03 16:26:12', '2025-08-03 16:26:12');
 
 -- --------------------------------------------------------
 
@@ -127,7 +132,8 @@ CREATE TABLE `tbl_media` (
 
 INSERT INTO `tbl_media` (`media_id`, `plot_id`, `file_name`, `created_at`, `updated_at`) VALUES
 (1, 1, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1752756875/Grave_Maintenance_-_Standard_copy_mzxqpt.jpg', '2025-08-02 04:17:40', '2025-08-02 04:17:40'),
-(2, 1, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1752756582/9457a7ca-fa2f-4331-b32e-d0223db1fd8a_-_Edited_xkre2p.png', '2025-08-02 04:17:40', '2025-08-02 04:17:40');
+(2, 1, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1752756582/9457a7ca-fa2f-4331-b32e-d0223db1fd8a_-_Edited_xkre2p.png', '2025-08-02 04:17:40', '2025-08-02 04:17:40'),
+(3, 15, 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1754204958/d7c71ee6-552f-44dc-911b-b713023e4d03_jkgwnp.png', '2025-08-03 07:02:58', '2025-08-03 07:02:58');
 
 -- --------------------------------------------------------
 
@@ -138,11 +144,13 @@ INSERT INTO `tbl_media` (`media_id`, `plot_id`, `file_name`, `created_at`, `upda
 CREATE TABLE `tbl_plots` (
   `plot_id` int NOT NULL,
   `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `category` enum('bronze','silver','platinum','diamond') NOT NULL,
+  `category` enum('bronze','silver','platinum','diamond','columbarium','chambers') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `length` varchar(255) DEFAULT NULL,
   `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `status` enum('available','reserved','occupied') NOT NULL,
+  `rows` varchar(255) DEFAULT NULL,
+  `columns` varchar(255) DEFAULT NULL,
+  `status` enum('available','reserved','occupied') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `coordinates` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -151,43 +159,22 @@ CREATE TABLE `tbl_plots` (
 -- Dumping data for table `tbl_plots`
 --
 
-INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `length`, `width`, `area`, `status`, `label`, `coordinates`) VALUES
-(1, 'A', 'diamond', '2.5', '1.2', '3.0', 'occupied', NULL, '123.79769285129, 10.249193799482'),
-(2, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79772218795, 10.249206732589'),
-(3, 'A', 'silver', NULL, NULL, NULL, 'available', NULL, '123.79775692256, 10.249221975178'),
-(4, 'A', 'silver', NULL, NULL, NULL, 'available', NULL, '123.7977887235, 10.249236063025'),
-(5, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79773427465, 10.24917878784'),
-(6, 'A', 'diamond', NULL, NULL, NULL, 'available', NULL, '123.79770376452, 10.249166316629'),
-(7, 'A', 'bronze', NULL, NULL, NULL, 'available', NULL, '123.79782322341, 10.249251074665'),
-(8, 'A', 'platinum', NULL, NULL, NULL, 'available', NULL, '123.79776900926, 10.249193799482'),
-(9, 'A', 'platinum', NULL, NULL, NULL, 'available', NULL, '123.79780116224, 10.249206963537'),
-(10, 'A', 'bronze', NULL, NULL, NULL, 'reserved', NULL, '123.79783613154, 10.249222206126');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbl_plots_col`
---
-
-CREATE TABLE `tbl_plots_col` (
-  `col_id` int NOT NULL,
-  `rows` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `columns` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `coordinates` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `tbl_plots_col`
---
-
-INSERT INTO `tbl_plots_col` (`col_id`, `rows`, `columns`, `coordinates`, `created_at`, `updated_at`) VALUES
-(1, '5', '9', '123.79734521528, 10.24940426143', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
-(2, '5', '9', '123.79737958462, 10.249367524939', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
-(3, '5', '9', '123.79741810198, 10.249323791016', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
-(4, '5', '9', '123.79745958222, 10.249275975252', '2025-08-02 21:12:12', '2025-08-02 21:12:12'),
-(5, '5', '9', '123.79750046989, 10.249232824435', '2025-08-02 21:12:12', '2025-08-02 21:12:12');
+INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `length`, `width`, `area`, `rows`, `columns`, `status`, `label`, `coordinates`) VALUES
+(1, 'A', 'diamond', '2.5', '1.2', '3.0', NULL, NULL, 'occupied', NULL, '123.79769285129, 10.249193799482'),
+(2, 'A', 'diamond', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79772218795, 10.249206732589'),
+(3, 'A', 'silver', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79775692256, 10.249221975178'),
+(4, 'A', 'silver', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.7977887235, 10.249236063025'),
+(5, 'A', 'diamond', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79773427465, 10.24917878784'),
+(6, 'A', 'diamond', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79770376452, 10.249166316629'),
+(7, 'A', 'bronze', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79782322341, 10.249251074665'),
+(8, 'A', 'platinum', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79776900926, 10.249193799482'),
+(9, 'A', 'platinum', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79780116224, 10.249206963537'),
+(10, 'A', 'chambers', NULL, NULL, NULL, NULL, NULL, 'reserved', NULL, '123.79783613154, 10.249222206126'),
+(11, NULL, 'chambers', NULL, NULL, NULL, '5', '5', NULL, NULL, '123.79734521528, 10.24940426143'),
+(12, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79737958462, 10.249367524939'),
+(13, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79741810198, 10.249323791016'),
+(14, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79745958222, 10.249275975252'),
+(15, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79750046989, 10.249232824435');
 
 -- --------------------------------------------------------
 
@@ -255,12 +242,6 @@ ALTER TABLE `tbl_plots`
   ADD PRIMARY KEY (`plot_id`);
 
 --
--- Indexes for table `tbl_plots_col`
---
-ALTER TABLE `tbl_plots_col`
-  ADD PRIMARY KEY (`col_id`);
-
---
 -- Indexes for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
@@ -280,31 +261,25 @@ ALTER TABLE `tbl_customers`
 -- AUTO_INCREMENT for table `tbl_deceased`
 --
 ALTER TABLE `tbl_deceased`
-  MODIFY `deceased_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `deceased_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `tbl_lot`
 --
 ALTER TABLE `tbl_lot`
-  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `lot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `tbl_media`
 --
 ALTER TABLE `tbl_media`
-  MODIFY `media_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `media_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_plots`
 --
 ALTER TABLE `tbl_plots`
-  MODIFY `plot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `tbl_plots_col`
---
-ALTER TABLE `tbl_plots_col`
-  MODIFY `col_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `plot_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
