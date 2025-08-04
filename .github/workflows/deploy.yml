@@ -1,16 +1,33 @@
 name: Deploy to x10Hosting
-
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --no-dev --optimize-autoloader
 
       - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -25,6 +42,5 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/vendor/**
             .env
-            /config.php
+            config.php
