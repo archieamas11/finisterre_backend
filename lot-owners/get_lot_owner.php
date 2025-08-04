@@ -11,15 +11,12 @@ $stmt = $conn->prepare("SELECT
     c.first_name, ' ',
     c.middle_name, ' ',
     c.last_name
-  )                  AS customer_name,
-  n.*
-FROM tbl_lot AS l
+  )                  AS customer_name
+  FROM tbl_lot AS l
 JOIN tbl_customers AS c
   ON c.customer_id = l.customer_id
 LEFT JOIN tbl_plots AS p
   ON p.plot_id = l.plot_id
-LEFT JOIN tbl_niche AS n
-  ON p.plot_id = n.plot_id
 WHERE l.lot_status != 'canceled'
 ORDER BY
   CASE WHEN l.lot_status = 'active' THEN 1 ELSE 2 END,
