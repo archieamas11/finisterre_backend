@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 03, 2025 at 05:38 PM
+-- Generation Time: Aug 04, 2025 at 04:07 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -169,7 +169,7 @@ INSERT INTO `tbl_plots` (`plot_id`, `block`, `category`, `length`, `width`, `are
 (7, 'A', 'bronze', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79782322341, 10.249251074665'),
 (8, 'A', 'platinum', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79776900926, 10.249193799482'),
 (9, 'A', 'platinum', NULL, NULL, NULL, NULL, NULL, 'available', NULL, '123.79780116224, 10.249206963537'),
-(10, 'A', 'chambers', NULL, NULL, NULL, NULL, NULL, 'reserved', NULL, '123.79783613154, 10.249222206126'),
+(10, 'A', 'bronze', NULL, NULL, NULL, NULL, NULL, 'reserved', NULL, '123.79783613154, 10.249222206126'),
 (11, NULL, 'chambers', NULL, NULL, NULL, '5', '5', NULL, NULL, '123.79734521528, 10.24940426143'),
 (12, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79737958462, 10.249367524939'),
 (13, NULL, 'chambers', NULL, NULL, NULL, '5', '9', NULL, NULL, '123.79741810198, 10.249323791016'),
