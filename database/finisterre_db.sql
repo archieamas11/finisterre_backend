@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 05, 2025 at 05:52 PM
+-- Generation Time: Aug 05, 2025 at 06:21 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -11,10 +11,10 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+;
+;
+;
+;
 
 --
 -- Database: `finisterre_db`
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `tbl_media` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`media_id`),
   KEY `plot_id` (`plot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_media`
@@ -151,18 +151,18 @@ INSERT INTO `tbl_media` (`media_id`, `plot_id`, `file_name`, `created_at`, `upda
 DROP TABLE IF EXISTS `tbl_plots`;
 CREATE TABLE IF NOT EXISTS `tbl_plots` (
   `plot_id` int NOT NULL AUTO_INCREMENT,
-  `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
-  `category` enum('bronze','silver','platinum','diamond','columbarium','chambers') CHARACTER SET utf8mb4 COLLATE utf8mb4 NOT NULL,
+  `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `category` enum('bronze','silver','platinum','diamond','columbarium','chambers') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `length` varchar(255) DEFAULT NULL,
-  `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
-  `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
+  `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `rows` varchar(255) DEFAULT NULL,
   `columns` varchar(255) DEFAULT NULL,
-  `status` enum('available','reserved','occupied') CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
-  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
+  `status` enum('available','reserved','occupied') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `coordinates` varchar(255) NOT NULL,
   PRIMARY KEY (`plot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_plots`
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `tbl_users` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`user_id`),
   KEY `customer_id` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_users`
@@ -243,6 +243,6 @@ ALTER TABLE `tbl_users`
   ADD CONSTRAINT `tbl_users_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `tbl_customers` (`customer_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+;
+;
+;
