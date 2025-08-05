@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `tbl_media` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`media_id`),
   KEY `plot_id` (`plot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
 
 --
 -- Dumping data for table `tbl_media`
@@ -151,18 +151,18 @@ INSERT INTO `tbl_media` (`media_id`, `plot_id`, `file_name`, `created_at`, `upda
 DROP TABLE IF EXISTS `tbl_plots`;
 CREATE TABLE IF NOT EXISTS `tbl_plots` (
   `plot_id` int NOT NULL AUTO_INCREMENT,
-  `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `category` enum('bronze','silver','platinum','diamond','columbarium','chambers') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `block` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
+  `category` enum('bronze','silver','platinum','diamond','columbarium','chambers') CHARACTER SET utf8mb4 COLLATE utf8mb4 NOT NULL,
   `length` varchar(255) DEFAULT NULL,
-  `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `width` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
+  `area` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
   `rows` varchar(255) DEFAULT NULL,
   `columns` varchar(255) DEFAULT NULL,
-  `status` enum('available','reserved','occupied') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `status` enum('available','reserved','occupied') CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4 DEFAULT NULL,
   `coordinates` varchar(255) NOT NULL,
   PRIMARY KEY (`plot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
 
 --
 -- Dumping data for table `tbl_plots`
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `tbl_users` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`user_id`),
   KEY `customer_id` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4;
 
 --
 -- Dumping data for table `tbl_users`
