@@ -11,6 +11,7 @@ if (!$plot_id) {
 $stmt = $conn->prepare("SELECT
     l.niche_number,
     l.niche_status,
+    l.lot_id,
     p.`rows`,
     p.`columns`,
     c.customer_id,
