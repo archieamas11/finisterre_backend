@@ -1,9 +1,16 @@
 <?php
 include __DIR__ . '/../config.php';
+include_once __DIR__ . '/../format-utils.php';
 
-// Get and decode input
 $data = json_decode(file_get_contents('php://input'), true);
-// Basic input validation
+$skipFormat = ['contact_number', 'birth_date', 'status', 'gender'];
+$forceLowercase = ['email'];
+$data = formatData(
+    $data,
+    $skipFormat,
+    $forceLowercase
+);
+
 $required_fields = ['last_name', 'first_name', 'middle_name', 'address', 'contact_number', 'email', 'birth_date', 'gender', 'religion', 'citizenship', 'status', 'occupation'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {

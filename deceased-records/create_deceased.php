@@ -1,10 +1,15 @@
 <?php
 include __DIR__ . '/../config.php';
+include_once __DIR__ . '/../format-utils.php';
 
 // Get and decode input
 $data = json_decode(file_get_contents('php://input'), true);
-// Basic input validation
-$required_fields = ['dead_fullname', 'lot_id', 'dead_gender', 'dead_interment', 'dead_birth_date', 'dead_date_death'];
+
+$skipFormat = ['dead_interment', 'dead_birth_date', 'dead_date_death'];
+$data = formatData(
+    $data,
+    $skipFormat,
+);$required_fields = ['dead_fullname', 'lot_id', 'dead_gender', 'dead_interment', 'dead_birth_date', 'dead_date_death'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
