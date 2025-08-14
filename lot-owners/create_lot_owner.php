@@ -11,12 +11,27 @@ if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
 
 // Validate required fields for tbl_lot
 $required_fields = [
-    'customer_id', 'plot_id', 'niche_number'
+    'customer_id', 'plot_id'
 ];
 foreach ($required_fields as $field) {
     if (!isset($data[$field]) || $data[$field] === '') {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
         exit();
+    }
+}
+
+// Derive niche values: only set status when niche_number is provided, else NULLs
+$nicheNumber = (isset($data['niche_number']) && $data['niche_number'] !== '') ? $data['niche_number'] : null;
+$nicheStatus = $nicheNumber !== null ? 'reserved' : null;
+
+// If niche_number is empty or null, update status in tbl_plots to "reserved"
+if ($nicheNumber === null) {
+    $plot_id = $data['plot_id'];
+    $update_plot_stmt = $conn->prepare("UPDATE tbl_plots SET status = 'reserved' WHERE plot_id = ?");
+    if ($update_plot_stmt) {
+        $update_plot_stmt->bind_param("s", $plot_id);
+        $update_plot_stmt->execute();
+        $update_plot_stmt->close();
     }
 }
 
@@ -33,13 +48,12 @@ if (!$insert) {
     exit();
 }
 
-$niche_status = 'reserved'; 
 $insert->bind_param(
     "ssss",
     $data['customer_id'],
     $data['plot_id'],
-    $data['niche_number'],
-    $niche_status
+    $nicheNumber,
+    $nicheStatus
 );
 
 $insert->execute();

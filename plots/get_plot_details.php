@@ -23,6 +23,7 @@ try {
     // Query to get owner information from tbl_lot joined with tbl_customers
     $ownerQuery = "
         SELECT 
+            l.lot_id,
             c.customer_id,
             CONCAT(c.first_name, ' ', IFNULL(c.middle_name, ''), ' ', c.last_name) as fullname,
             c.email,
