@@ -28,13 +28,14 @@ if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
 }
 
 $category = "Chambers";
-$block = null; // Memorial Chambers don't use blocks
-$length = null; // Memorial Chambers use rows/columns instead
+$block = null;
+$length = null;
 $width = null;
 $area = null;
+$status = null;
 
 // Insert new Memorial Chambers plot
-$insert = $conn->prepare("INSERT INTO `tbl_plots`(`category`, `rows`, `columns`, `coordinates`, `status`) VALUES (?, ?, ?, ?, 'available')");
+$insert = $conn->prepare("INSERT INTO `tbl_plots`(`category`, `rows`, `columns`, `coordinates`, `status`) VALUES (?, ?, ?, ?, ?)");
 
 if (!$insert) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
@@ -43,11 +44,12 @@ if (!$insert) {
 }
 
 $insert->bind_param(
-    "ssss",
+    "sssss",
     $category,
     $data['rows'],
     $data['columns'],
-    $data['coordinates']
+    $data['coordinates'],
+    $status
 );
 $insert->execute();
 
