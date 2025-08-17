@@ -13,7 +13,7 @@ $data = formatData(
     $forceLowercase
 );
 
-$required_fields = ['category', 'coordinates'];
+$required_fields = ['rows', 'columns', 'coordinates'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
@@ -27,20 +27,14 @@ if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
     exit();
 }
 
-// 🌿 Fixed dimensions for Serenity Lawn plots
-$length = "2.4";
-$width = "1.2";
-$area = "3.0";
+$category = "Chambers";
+$block = null; // Memorial Chambers don't use blocks
+$length = null; // Memorial Chambers use rows/columns instead
+$width = null;
+$area = null;
 
-// 🗂️ Validate block is provided for Serenity Lawn categories
-$serenity_categories = ['Bronze', 'Silver', 'Platinum', 'Diamond'];
-if (in_array($data['category'], $serenity_categories) && empty($data['block'])) {
-    echo json_encode(["success" => false, "message" => "Block is required for Serenity Lawn plots"]);
-    exit();
-}
-
-// Insert new plot
-$insert = $conn->prepare("INSERT INTO `tbl_plots`(`block`, `category`, `length`, `width`, `area`, `coordinates`, `status`) VALUES (?, ?, ?, ?, ?, ?, 'available')");
+// Insert new Memorial Chambers plot
+$insert = $conn->prepare("INSERT INTO `tbl_plots`(`category`, `rows`, `columns`, `coordinates`, `status`) VALUES (?, ?, ?, ?, 'available')");
 
 if (!$insert) {
     echo json_encode(["success" => false, "message" => "SQL error", "error" => $conn->error]);
@@ -49,21 +43,19 @@ if (!$insert) {
 }
 
 $insert->bind_param(
-    "ssssss",
-    $data['block'],
-    $data['category'],
-    $length,
-    $width,
-    $area,
+    "ssss",
+    $category,
+    $data['rows'],
+    $data['columns'],
     $data['coordinates']
 );
 $insert->execute();
 
 if ($insert->affected_rows > 0) {
     $plot_id = $conn->insert_id;
-    echo json_encode(["success" => true, "message" => "Plot created successfully", "plot_id" => $plot_id]);
+    echo json_encode(["success" => true, "message" => "Memorial Chambers plot created successfully", "plot_id" => $plot_id]);
 } else {
-    echo json_encode(["success" => false, "message" => "Failed to create plot"]);
+    echo json_encode(["success" => false, "message" => "Failed to create Memorial Chambers plot"]);
 }
 
 $insert->close();
