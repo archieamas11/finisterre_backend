@@ -5,7 +5,7 @@ include_once __DIR__ . '/../format-utils.php';
 header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
-$skipFormat = ['length', 'width', 'area', 'coordinates'];
+$skipFormat = ['coordinates'];
 $forceLowercase = [];
 $data = formatData(
     $data,
@@ -13,7 +13,7 @@ $data = formatData(
     $forceLowercase
 );
 
-$required_fields = ['category', 'coordinates'];
+$required_fields = ['category', 'coordinates', 'block'];
 foreach ($required_fields as $field) {
     if (empty($data[$field])) {
         echo json_encode(["success" => false, "message" => "Missing required field: $field"]);
@@ -26,6 +26,10 @@ if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
     echo json_encode(["success" => false, "message" => "Invalid JSON input: " . json_last_error_msg()]);
     exit();
 }
+
+$length = "2.4";
+$width = "1.2";
+$area = "3.0";
 
 // Insert new plot
 $insert = $conn->prepare("INSERT INTO `tbl_plots`(`block`, `category`, `length`, `width`, `area`, `coordinates`, `status`) VALUES (?, ?, ?, ?, ?, ?, 'available')");
@@ -40,9 +44,9 @@ $insert->bind_param(
     "ssssss",
     $data['block'],
     $data['category'],
-    $data['length'],
-    $data['width'],
-    $data['area'],
+    $length,
+    $width,
+    $area,
     $data['coordinates']
 );
 $insert->execute();
