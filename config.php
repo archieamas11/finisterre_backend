@@ -1,7 +1,10 @@
 <?php
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowed_origins = 'https://finisterre.vercel.app';
-if ($origin === $allowed_origins) {
+$allowed_origins = [
+    'https://finisterre.vercel.app',
+    'https://finisterre-git-new-router-archiealbarico69-gmailcoms-projects.vercel.app'
+];
+if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
