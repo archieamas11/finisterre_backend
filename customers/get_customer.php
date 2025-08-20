@@ -1,6 +1,9 @@
 <?php
 include __DIR__ . '/../config.php';
 header('Content-Type: application/json; charset=utf-8');
+// Require a valid JWT before proceeding
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
 
 $data = json_decode(file_get_contents('php://input'), true) ?: [];
 $requestedId = isset($data['id']) ? trim((string)$data['id']) : null;
