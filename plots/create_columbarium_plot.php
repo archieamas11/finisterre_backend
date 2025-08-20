@@ -1,8 +1,9 @@
 <?php
 include __DIR__ . '/../config.php';
 include_once __DIR__ . '/../format-utils.php';
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
 
-header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 $skipFormat = ['coordinates'];

@@ -1,3 +1,8 @@
+<?php
+// Require a valid JWT before proceeding
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
+?>
 <!DOCTYPE html>
 <html lang="en">
 

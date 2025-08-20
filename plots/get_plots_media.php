@@ -1,5 +1,7 @@
 <?php
 include __DIR__ . '/../config.php';
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
 
 // Try to get plot_id from JSON body or POST form data
 $data = json_decode(file_get_contents('php://input'), true);

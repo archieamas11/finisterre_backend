@@ -1,9 +1,7 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
 include __DIR__ . '/../config.php';
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
 
 // Get and decode input
 $data = json_decode(file_get_contents('php://input'), true);

@@ -1,5 +1,8 @@
 <?php
 include __DIR__ . '/../config.php';
+// Require a valid JWT before proceeding
+require_once __DIR__ . '/../auth/jwt.php';
+require_auth(false);
 header('Content-Type: application/json; charset=utf-8');
 
 // Compute total chambers capacity using SQL to avoid PHP loops
