@@ -1,9 +1,9 @@
 <?php
 include __DIR__ . '/../config.php';
-// Require a valid JWT before proceeding
 require_once __DIR__ . '/../auth/jwt.php';
-require_auth(false);
 include_once __DIR__ . '/../format-utils.php';
+include_once __DIR__ . '/../logs/log_helper.php';
+$payload = require_auth(false);
 
 $data = json_decode(file_get_contents('php://input'), true);
 $skipFormat = ['contact_number', 'birth_date', 'status', 'gender'];
@@ -73,7 +73,18 @@ $insert->bind_param(
 $insert->execute();
 
 if ($insert->affected_rows > 0) {
-    echo json_encode(["success" => true, "message" => "Customer created successfully"]);
+    $newId = $insert->insert_id;
+    // Log admin action: only log if the JWT payload indicates admin
+    $logResult = null;
+    if (!empty($payload) && ($payload->isAdmin ?? false)) {
+        $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
+        $action = 'ADD';
+        $target = "Customer C-{$newId}";
+        $details = "Added new customer: {$data['first_name']} {$data['last_name']}";
+        $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+    }
+
+    echo json_encode(["success" => true, "message" => "Customer created successfully", "id" => $newId, "log" => $logResult]);
 } else {
     echo json_encode(["success" => false, "message" => "Failed to create customer"]);
 }

@@ -7,6 +7,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+// include log helper
+include_once __DIR__ . '/../logs/log_helper.php';
+
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -55,6 +58,11 @@ if ($result->num_rows > 0) {
         
         $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
         
+        // Log admin login server-side (only when isAdmin == 1)
+        if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
+            create_log($conn, $username, 'LOGIN', 'System', "{$username} logged in");
+        }
+
         echo json_encode([
             "success" => true,
             "message" => $user['isAdmin'] ? "Admin login successful" : "User login successful",

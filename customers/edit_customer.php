@@ -2,7 +2,10 @@
 include __DIR__ . '/../config.php';
 // Require a valid JWT before proceeding
 require_once __DIR__ . '/../auth/jwt.php';
-require_auth(false);
+// returns payload when token is present
+$payload = require_auth(false);
+// include log helper
+include_once __DIR__ . '/../logs/log_helper.php';
 include_once __DIR__ . '/../format-utils.php';
 
 // Get and decode input
@@ -55,9 +58,20 @@ $update->bind_param(
 );
 
 if ($update->execute()) {
+    // Log admin action if applicable
+    $logResult = null;
+    if (!empty($payload) && ($payload->isAdmin ?? false)) {
+        $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
+        $action = 'UPDATE';
+        $target = "Customer C-{$data['customer_id']}";
+        $details = "Updated customer: {$data['first_name']} {$data['last_name']}";
+        $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+    }
+
     echo json_encode([
         'success' => true,
-        'id' => $data['customer_id']
+        'id' => $data['customer_id'],
+        'log' => $logResult
     ]);
 } else {
     http_response_code(500);
