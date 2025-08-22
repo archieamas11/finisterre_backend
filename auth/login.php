@@ -47,18 +47,8 @@ if ($result->num_rows > 0) {
         $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
         
         // Log admin login server-side (only when isAdmin == 1) - completely non-blocking
-        // 💡 Logging should never interfere with the main login flow
         if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
-            try {
-                $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " Logged in");
-                // Optional: log result for debugging, but don't stop login process
-                if (!$logResult['success']) {
-                    error_log("Login log creation failed: " . json_encode($logResult));
-                }
-            } catch (Exception $e) {
-                // ⚠️ Never let logging errors break the login flow
-                error_log("Login logging exception: " . $e->getMessage());
-            }
+            $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " Logged in");
         }
 
         echo json_encode([
