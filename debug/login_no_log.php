@@ -1,6 +1,6 @@
 <?php
+// 🔧 Simplified login without logging for production debugging
 include __DIR__ . '/../config.php';
-include_once __DIR__ . '/../logs/log_helper.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -46,22 +46,8 @@ if ($result->num_rows > 0) {
         
         $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
         
-        // Log admin login server-side (only when isAdmin == 1) - completely non-blocking
-        if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
-            try {
-                // 🔍 Use original username for lookup, formatted username for display
-                $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " logged in");
-                
-                // 🐛 Log any logging errors for debugging but don't fail the login
-                if (!empty($logResult) && !$logResult['success']) {
-                    error_log("Login log creation failed for user {$username}: " . json_encode($logResult));
-                }
-            } catch (Exception $e) {
-                // ⚠️ Catch any exceptions from logging and continue with login
-                error_log("Login logging exception for user {$username}: " . $e->getMessage());
-            }
-        }
-
+        // ⚠️ NO LOGGING - this is for production debugging only
+        
         echo json_encode([
             "success" => true,
             "message" => $user['isAdmin'] ? "Admin login successful" : "User login successful",

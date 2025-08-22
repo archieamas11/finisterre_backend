@@ -1,8 +1,19 @@
 <?php
 function create_log($conn, $userIdentifier, $action, $target = null, $details = null) {
-    // ⚡️ Validate database connection first
-    if (!$conn || $conn->connect_error) {
-        return ["success" => false, "message" => "Database connection error", "error" => "Invalid connection"];
+    // ⚡️ Validate database connection first - but be graceful about it
+    if (!$conn) {
+        return ["success" => false, "message" => "Database connection is null", "error" => "No connection provided"];
+    }
+    
+    // 🔍 In some production environments, connection errors might not be exposed the same way
+    try {
+        // Test connection with a simple query
+        $testResult = $conn->query("SELECT 1");
+        if (!$testResult) {
+            return ["success" => false, "message" => "Database connection test failed", "error" => $conn->error ?: "Connection test failed"];
+        }
+    } catch (Exception $e) {
+        return ["success" => false, "message" => "Database connection exception", "error" => $e->getMessage()];
     }
     
     // 🔐 Validate required parameters
@@ -12,63 +23,85 @@ function create_log($conn, $userIdentifier, $action, $target = null, $details = 
     
     // 🔍 Resolve user id if username provided
     $userId = null;
-    if (is_numeric($userIdentifier)) {
-        $userId = (int)$userIdentifier;
-        
-        // ⚠️ Verify user exists in database
-        $checkStmt = $conn->prepare("SELECT user_id FROM tbl_users WHERE user_id = ? LIMIT 1");
-        if ($checkStmt) {
-            $checkStmt->bind_param("i", $userId);
-            $checkStmt->execute();
-            $result = $checkStmt->get_result();
-            if ($result->num_rows === 0) {
-                $userId = null; // User doesn't exist
-            }
-            $checkStmt->close();
-        }
-    } elseif (!empty($userIdentifier)) {
-        // 🔍 Try to find user_id by username
-        $ustmt = $conn->prepare("SELECT user_id FROM tbl_users WHERE username = ? LIMIT 1");
-        if ($ustmt) {
-            $ustmt->bind_param("s", $userIdentifier);
-            if ($ustmt->execute()) {
-                $ures = $ustmt->get_result();
-                if ($row = $ures->fetch_assoc()) {
-                    $userId = (int)$row['user_id'];
+    
+    try {
+        if (is_numeric($userIdentifier)) {
+            $userId = (int)$userIdentifier;
+            
+            // ⚠️ Verify user exists in database
+            $checkStmt = $conn->prepare("SELECT user_id FROM tbl_users WHERE user_id = ? LIMIT 1");
+            if ($checkStmt) {
+                $checkStmt->bind_param("i", $userId);
+                if ($checkStmt->execute()) {
+                    $result = $checkStmt->get_result();
+                    if ($result->num_rows === 0) {
+                        $userId = null; // User doesn't exist
+                    }
+                } else {
+                    // If the query fails, we can't verify the user exists
+                    return ["success" => false, "message" => "Failed to verify user ID", "error" => $conn->error];
                 }
+                $checkStmt->close();
+            } else {
+                return ["success" => false, "message" => "Failed to prepare user verification query", "error" => $conn->error];
             }
-            $ustmt->close();
+        } elseif (!empty($userIdentifier)) {
+            // 🔍 Try to find user_id by username (case-sensitive)
+            $ustmt = $conn->prepare("SELECT user_id FROM tbl_users WHERE username = ? LIMIT 1");
+            if ($ustmt) {
+                $ustmt->bind_param("s", $userIdentifier);
+                if ($ustmt->execute()) {
+                    $ures = $ustmt->get_result();
+                    if ($row = $ures->fetch_assoc()) {
+                        $userId = (int)$row['user_id'];
+                    }
+                } else {
+                    $ustmt->close();
+                    return ["success" => false, "message" => "Failed to execute username lookup", "error" => $conn->error];
+                }
+                $ustmt->close();
+            } else {
+                return ["success" => false, "message" => "Failed to prepare username lookup query", "error" => $conn->error];
+            }
         }
+    } catch (Exception $e) {
+        return ["success" => false, "message" => "Exception during user lookup", "error" => $e->getMessage()];
     }
     
     // ⚠️ If user_id is still null, we cannot create the log due to NOT NULL constraint
     if ($userId === null) {
-        return ["success" => false, "message" => "Invalid user - cannot create log without valid user_id", "error" => "User validation failed"];
+        return ["success" => false, "message" => "Invalid user - cannot create log without valid user_id", "error" => "User validation failed for identifier: " . $userIdentifier];
     }
     
     // 🛠️ Prepare insert statement with proper error handling
-    $insert = $conn->prepare("INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (?, ?, ?, ?, NOW())");
-    if (!$insert) {
-        return ["success" => false, "message" => "SQL error preparing insert", "error" => $conn->error];
-    }
-    
-    // 🔐 Bind parameters and execute
-    $insert->bind_param("isss", $userId, $action, $target, $details);
-    
-    if (!$insert->execute()) {
-        $err = $conn->error;
+    try {
+        $insert = $conn->prepare("INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (?, ?, ?, ?, NOW())");
+        if (!$insert) {
+            return ["success" => false, "message" => "SQL error preparing insert", "error" => $conn->error];
+        }
+        
+        // 🔐 Bind parameters and execute
+        $insert->bind_param("isss", $userId, $action, $target, $details);
+        
+        if (!$insert->execute()) {
+            $err = $conn->error;
+            $insert->close();
+            return ["success" => false, "message" => "Failed to execute log insert", "error" => $err];
+        }
+        
+        // ✅ Check if row was actually inserted
+        if ($insert->affected_rows > 0) {
+            $logId = $conn->insert_id;
+            $insert->close();
+            return ["success" => true, "message" => "Log created successfully", "log_id" => $logId];
+        }
+        
         $insert->close();
-        return ["success" => false, "message" => "Failed to execute log insert", "error" => $err];
+        return ["success" => false, "message" => "No rows affected - log not created", "error" => "Insert failed"];
+        
+    } catch (Exception $e) {
+        return ["success" => false, "message" => "Exception during log insert", "error" => $e->getMessage()];
     }
-    
-    // ✅ Check if row was actually inserted
-    if ($insert->affected_rows > 0) {
-        $insert->close();
-        return ["success" => true, "message" => "Log created successfully", "log_id" => $conn->insert_id];
-    }
-    
-    $insert->close();
-    return ["success" => false, "message" => "No rows affected - log not created", "error" => "Insert failed"];
 }
 
 ?>
