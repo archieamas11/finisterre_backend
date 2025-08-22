@@ -1,14 +1,9 @@
 <?php
-header("Content-Type: application/json");
 include __DIR__ . '/../config.php';
-
-// Include JWT library
+include_once __DIR__ . '/../logs/log_helper.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
-// include log helper
-include_once __DIR__ . '/../logs/log_helper.php';
 
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
