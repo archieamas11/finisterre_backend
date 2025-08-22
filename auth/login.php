@@ -1,24 +1,7 @@
 <?php
 include __DIR__ . '/../config.php';
 include_once __DIR__ . '/../logs/log_helper.php';
-
-// Ensure we return JSON for errors
-header("Content-Type: application/json; charset=utf-8");
-
-// Require Composer autoload if available. In production it's common to forget composer install,
-// which causes a fatal error. Return a JSON 500 with a helpful message instead.
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-} else {
-    http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Server configuration error: dependencies not installed (vendor/autoload.php missing)."], JSON_UNESCAPED_SLASHES);
-    // Optionally log the problem server-side
-    if (function_exists('create_log')) {
-        @create_log($conn ?? null, 'system', 'ERROR', 'System', 'Vendor autoload missing on login.php');
-    }
-    exit();
-}
-
+require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 

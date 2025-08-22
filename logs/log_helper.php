@@ -10,14 +10,15 @@ function create_log($conn, $userIdentifier, $action, $target = null, $details = 
     if (is_numeric($userIdentifier)) {
         $userId = (int)$userIdentifier;
     } elseif (!empty($userIdentifier)) {
-        // Try to find user_id by username
+        // Try to find user_id by username without relying on get_result()
         $ustmt = $conn->prepare("SELECT user_id FROM tbl_users WHERE username = ? LIMIT 1");
         if ($ustmt) {
             $ustmt->bind_param("s", $userIdentifier);
             $ustmt->execute();
-            $ures = $ustmt->get_result();
-            if ($row = $ures->fetch_assoc()) {
-                $userId = (int)$row['user_id'];
+            $fetchedUserId = null;
+            $ustmt->bind_result($fetchedUserId);
+            if ($ustmt->fetch()) {
+                $userId = (int)$fetchedUserId;
             }
             $ustmt->close();
         }
@@ -32,20 +33,20 @@ function create_log($conn, $userIdentifier, $action, $target = null, $details = 
     $details = $formatted['details'] ?? $details;
 
     // Fallback: null user id allowed (for anonymous logs)
-    $insert = $conn->prepare("INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (?, ?, ?, ?, NOW())");
-    if (!$insert) {
-        return ["success" => false, "message" => "SQL error preparing insert", "error" => $conn->error];
-    }
-
-    // Bind types: user_id int or null => use 'i' but provide null as null param via bind_param requires variable
-    // We'll coerce null user id to 0 and store 0 when unknown (alternatively use NULL via separate query, but keep simple)
-    // Check if userId is null; if so, bind as NULL using a NULL value by using 's' and null string "" in DB will convert depending on schema
-    // Better approach: if userId is null, bind as null via mysqli_stmt::bind_param doesn't accept null type directly; use workaround with 'i' and null cast
+    // Prepare insert that uses NULL for user_id if unknown (avoids bind_param null edge cases)
     if ($userId === null) {
-        $uid = null;
-        // Use 'isss' and pass null (will insert empty string). If you prefer true NULL, use dynamic query setting to NULL; keep simple and insert empty string for now.
-        $insert->bind_param("isss", $uid, $action, $target, $details);
+        $insertSql = "INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (NULL, ?, ?, ?, NOW())";
+        $insert = $conn->prepare($insertSql);
+        if (!$insert) {
+            return ["success" => false, "message" => "SQL error preparing insert", "error" => $conn->error];
+        }
+        $insert->bind_param("sss", $action, $target, $details);
     } else {
+        $insertSql = "INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (?, ?, ?, ?, NOW())";
+        $insert = $conn->prepare($insertSql);
+        if (!$insert) {
+            return ["success" => false, "message" => "SQL error preparing insert", "error" => $conn->error];
+        }
         $uid = $userId;
         $insert->bind_param("isss", $uid, $action, $target, $details);
     }
