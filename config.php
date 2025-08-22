@@ -5,6 +5,7 @@ $allowed_origins = [
     'https://finisterre-git-new-router-archiealbarico69-gmailcoms-projects.vercel.app',
     'https://finisterre-git-valha-9a5467-archiealbarico69-gmailcoms-projects.vercel.app',
     'https://finisterre-imad4blc8-archiealbarico69-gmailcoms-projects.vercel.app',
+    'https://finisterre-git-pluginstest-archiealbarico69-gmailcoms-projects.vercel.app',
     'http://localhost'
 ];
 if (in_array($origin, $allowed_origins, true)) {
