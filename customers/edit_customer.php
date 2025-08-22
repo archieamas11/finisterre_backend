@@ -69,11 +69,6 @@ if ($update->execute()) {
             $target = "Customer C-{$data['customer_id']}";
             $details = "Updated customer: {$data['first_name']} {$data['last_name']}";
             $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
-            
-            // 🐛 Log any logging errors for debugging but don't fail the operation
-            if (!empty($logResult) && !$logResult['success']) {
-                error_log("Log creation failed: " . json_encode($logResult));
-            }
         }
     }
 

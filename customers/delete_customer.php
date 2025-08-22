@@ -49,11 +49,6 @@ if ($stmt->execute()) {
             $target = "Customer C-{$id}";
             $details = "Deleted customer: {$customer_name}";
             $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
-            
-            // 🐛 Log any logging errors for debugging but don't fail the operation
-            if (!empty($logResult) && !$logResult['success']) {
-                error_log("Delete log creation failed: " . json_encode($logResult));
-            }
         }
     }
     
