@@ -49,7 +49,17 @@ if ($result->num_rows > 0) {
         // ⚡️ Log admin login server-side (only when isAdmin == 1) - completely non-blocking
         // ⚠️ Logging errors should NOT prevent successful login
         if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
-            $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " Logged in");
+            try {
+                $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " Logged in");
+                if (!$logResult || !$logResult['success']) {
+                    error_log("Login successful but logging failed for user '$username': " . 
+                             (isset($logResult['message']) ? $logResult['message'] : 'Unknown error'));
+                }
+            } catch (Exception $e) {
+                error_log("Login successful but logging threw exception for user '$username': " . $e->getMessage());
+            } catch (Error $e) {
+                error_log("Login successful but logging caused fatal error for user '$username': " . $e->getMessage());
+            }
         }
 
         echo json_encode([
