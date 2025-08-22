@@ -39,18 +39,16 @@ $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
     // Log admin action if applicable (non-blocking)
-    $logResult = null;
-    if (!empty($payload) && ($payload->isAdmin ?? false)) {
-        $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
-        
-        // 💡 Only attempt logging if we have valid user identifier
-        if ($userIdentifier) {
-            $action = 'DELETE';
-            $target = "Customer C-{$id}";
-            $details = "Deleted customer: {$customer_name}";
-            $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
-        }
-    }
+    // $logResult = null;
+    // if (!empty($payload) && ($payload->isAdmin ?? false)) {
+    //     $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
+    //     if ($userIdentifier) {
+    //         $action = 'DELETE';
+    //         $target = "Customer C-{$id}";
+    //         $details = "Deleted customer: {$customer_name}";
+    //         $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+    //     }
+    // }
     
     echo json_encode(['success' => true, 'message' => 'Customer deleted successfully', 'log' => $logResult]);
 } else {
