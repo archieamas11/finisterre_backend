@@ -14,13 +14,11 @@ function formatData($data, $skipKeys = [], $lowercaseKeys = [], $customFormat = 
         if (in_array($key, $skipKeys)) {
             continue;
         } elseif (in_array($key, $lowercaseKeys)) {
-            // ⚠️ Only apply string functions to string values
-            $data[$key] = is_string($value) ? strtolower($value) : $value;
+            $data[$key] = strtolower($value);
         } elseif ($customFormat && is_callable($customFormat)) {
             $data[$key] = $customFormat($key, $value);
         } else {
-            // ⚠️ Only apply string functions to string values
-            $data[$key] = is_string($value) ? ucwords(strtolower($value)) : $value;
+            $data[$key] = ucwords(strtolower($value));
         }
     }
     return $data;

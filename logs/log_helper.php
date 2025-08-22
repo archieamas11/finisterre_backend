@@ -22,17 +22,6 @@ function create_log($conn, $userIdentifier, $action, $target = null, $details = 
         }
     }
 
-    // Format target/details using shared formatter if available
-    if (file_exists(__DIR__ . '/../format-utils.php')) {
-        include_once __DIR__ . '/../format-utils.php';
-        $formatted = formatData([
-            'target' => $target ?? '',
-            'details' => $details ?? ''
-        ], [], [], null);
-        $target = $formatted['target'] ?? $target;
-        $details = $formatted['details'] ?? $details;
-    }
-
     // Fallback: null user id allowed (for anonymous logs)
     $insert = $conn->prepare("INSERT INTO tbl_logs (`user_id`, `action`, `target`, `details`, `created_at`) VALUES (?, ?, ?, ?, NOW())");
     if (!$insert) {
