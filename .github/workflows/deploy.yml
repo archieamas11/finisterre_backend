@@ -37,7 +37,7 @@ jobs:
           protocol: ftp
           server-dir: public_html/
           local-dir: ./
-          dangerous-clean-slate: true
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**
