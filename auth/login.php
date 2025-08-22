@@ -48,7 +48,7 @@ if ($result->num_rows > 0) {
         
         // ⚡️ Log admin login server-side (only when isAdmin == 1) - completely non-blocking
         if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
-            $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " Logged in");
+            $logResult = create_log($conn, $username, 'LOGIN', 'System', ucwords($username) . " logged in");
         }
 
         echo json_encode([
