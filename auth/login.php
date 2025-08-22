@@ -45,6 +45,11 @@ if ($result->num_rows > 0) {
         );
         
         $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
+        
+        // Log admin login server-side (only when isAdmin == 1)
+        if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
+            create_log($conn, $username, 'LOGIN', 'System', "{$username} logged in");
+        }
 
         echo json_encode([
             "success" => true,
