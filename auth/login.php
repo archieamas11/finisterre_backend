@@ -5,13 +5,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-// Only process POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(["success" => false, "message" => "Method Not Allowed"]);
-    exit();
-}
-
 $data = json_decode(file_get_contents('php://input'), true);
 $username = isset($data['username']) ? $data['username'] : '';
 $password = isset($data['password']) ? $data['password'] : '';
