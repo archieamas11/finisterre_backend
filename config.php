@@ -3,7 +3,8 @@ $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowed_origins = [
     'https://finisterre.vercel.app',
     'https://finisterre-git-new-router-archiealbarico69-gmailcoms-projects.vercel.app',
-    'https://finisterre-git-valha-9a5467-archiealbarico69-gmailcoms-projects.vercel.app'
+    'https://finisterre-git-valha-9a5467-archiealbarico69-gmailcoms-projects.vercel.app',
+    'http://localhost'
 ];
 if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
