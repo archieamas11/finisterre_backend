@@ -46,10 +46,15 @@ if ($result->num_rows > 0) {
         
         $token = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
         
-        // Log admin login server-side (only when isAdmin == 1)
-        // if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
-        //     create_log($conn, $username, 'LOGIN', 'System', "{$username} logged in");
-        // }
+        // Log admin login server-side (only when isAdmin == 1) - non-blocking
+        if (!empty($user['isAdmin']) && (int)$user['isAdmin'] === 1) {
+            $logResult = create_log($conn, $username, 'LOGIN', 'System', "{$username} logged in");
+            
+            // 🐛 Log any logging errors for debugging but don't fail the login
+            if (!empty($logResult) && !$logResult['success']) {
+                error_log("Login log creation failed for user {$username}: " . json_encode($logResult));
+            }
+        }
 
         echo json_encode([
             "success" => true,

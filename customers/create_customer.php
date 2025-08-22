@@ -74,14 +74,23 @@ $insert->execute();
 
 if ($insert->affected_rows > 0) {
     $newId = $insert->insert_id;
-    // Log admin action: only log if the JWT payload indicates admin
+    // Log admin action: only log if the JWT payload indicates admin (non-blocking)
     $logResult = null;
     if (!empty($payload) && ($payload->isAdmin ?? false)) {
         $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
-        $action = 'ADD';
-        $target = "Customer C-{$newId}";
-        $details = "Added new customer: {$data['first_name']} {$data['last_name']}";
-        $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+        
+        // 💡 Only attempt logging if we have valid user identifier
+        if ($userIdentifier) {
+            $action = 'ADD';
+            $target = "Customer C-{$newId}";
+            $details = "Added new customer: {$data['first_name']} {$data['last_name']}";
+            $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+            
+            // 🐛 Log any logging errors for debugging but don't fail the operation
+            if (!empty($logResult) && !$logResult['success']) {
+                error_log("Log creation failed: " . json_encode($logResult));
+            }
+        }
     }
 
     echo json_encode(["success" => true, "message" => "Customer created successfully", "id" => $newId, "log" => $logResult]);

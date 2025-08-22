@@ -58,18 +58,28 @@ $update->bind_param(
 );
 
 if ($update->execute()) {
-    // Log admin action if applicable
+    // Log admin action if applicable (non-blocking)
     $logResult = null;
     if (!empty($payload) && ($payload->isAdmin ?? false)) {
         $userIdentifier = $payload->username ?? ($payload->user_id ?? null);
-        $action = 'UPDATE';
-        $target = "Customer C-{$data['customer_id']}";
-        $details = "Updated customer: {$data['first_name']} {$data['last_name']}";
-        $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+        
+        // 💡 Only attempt logging if we have valid user identifier
+        if ($userIdentifier) {
+            $action = 'UPDATE';
+            $target = "Customer C-{$data['customer_id']}";
+            $details = "Updated customer: {$data['first_name']} {$data['last_name']}";
+            $logResult = create_log($conn, $userIdentifier, $action, $target, $details);
+            
+            // 🐛 Log any logging errors for debugging but don't fail the operation
+            if (!empty($logResult) && !$logResult['success']) {
+                error_log("Log creation failed: " . json_encode($logResult));
+            }
+        }
     }
 
     echo json_encode([
         'success' => true,
+        'message' => 'Customer updated successfully',
         'id' => $data['customer_id'],
         'log' => $logResult
     ]);
