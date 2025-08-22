@@ -20,7 +20,6 @@ $search = isset($data['search']) && $data['search'] !== '' ? trim((string)$data[
 // Build SQL to fetch users
 $sql = "SELECT
     u.user_id,
-    u.customer_id,
     u.username,
     u.isAdmin,
     u.isArchive,
