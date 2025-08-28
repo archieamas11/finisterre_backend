@@ -6,7 +6,11 @@ $allowed_origins = [
     'https://finisterre-git-valha-9a5467-archiealbarico69-gmailcoms-projects.vercel.app',
     'https://finisterre-git-pluginstest-archiealbarico69-gmailcoms-projects.vercel.app',
     'https://finisterre-git-tanst-ff8d3b-archiealbarico69-gmailcoms-projects.vercel.app',
-    'https://finisterre.x10.bz'
+    'https://finisterre.x10.bz',
+    'capacitor://localhost',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://10.0.2.2'
 ];
 if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
