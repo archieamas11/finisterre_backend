@@ -10,7 +10,8 @@ $allowed_origins = [
     'capacitor://localhost',
     'http://localhost',
     'http://127.0.0.1',
-    'http://10.0.2.2'
+    'http://10.0.2.2',
+    'https://finisterre-git-capacitor-archiealbarico69-gmailcoms-projects.vercel.app'
 ];
 if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
